@@ -1,9 +1,8 @@
-import torch
+from typing import Tuple
 
+import torch
 from torch import Tensor
 from torch.nn import Module
-
-from typing import Tuple
 
 
 class MultiActivation(Module):
