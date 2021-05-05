@@ -7,7 +7,26 @@ import torch.nn.functional as F
 from typing import Tuple
 
 class MultiActivation(Module):
-    """
+    """Applies a multi activation transformation to the incoming data.
+
+    Args:
+        activation (tuple or str): Activation functions
+        strategy (str, optional): Output tensor strategy. Default: ``mean``
+
+    Shape:
+        - Input: :math:`(N, *)` where `*` means, any number of additional
+          dimensions
+        - Output (concat): :math:`(N, n*)`, `n` times the input shape shape
+        - Output (mean): :math:`(N, *)`, same shape as the input
+
+    Examples::
+
+        >>> m = MultiActivation(('relu', 'sigmoid), strategy='mean')
+        >>> input = torch.randn(128, 32)
+        >>> output = m(input)
+        >>> print(output.size())
+        torch.Size([128, 32])
+
     """
 
     __constants__ = ['activation', 'strategy']
@@ -69,12 +88,3 @@ class MultiActivation(Module):
 
     def forward(self, input: Tensor) -> Tensor:
         return self._multi_activation_forward(input)
-
-
-if __name__ == '__main__':
-    m = MultiActivation(activation=('relu', 'sigmoid'), strategy='mean')
-    t = torch.randn(128, 32)
-    print(t.shape)
-    print(t)
-    print(m(t))
-    print(m(t).shape)
