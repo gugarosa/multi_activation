@@ -2,9 +2,9 @@ import torch
 
 from torch import Tensor
 from torch.nn import Module
-import torch.nn.functional as F
 
 from typing import Tuple
+
 
 class MultiActivation(Module):
     """Applies a multi activation transformation to the incoming data.
@@ -21,7 +21,7 @@ class MultiActivation(Module):
 
     Examples::
 
-        >>> m = MultiActivation(('relu', 'sigmoid), strategy='mean')
+        >>> m = MultiActivation((ReLU(), Sigmoid()), strategy='mean')
         >>> input = torch.randn(128, 32)
         >>> output = m(input)
         >>> print(output.size())
@@ -34,36 +34,30 @@ class MultiActivation(Module):
     activation: Tuple[str, ...]
     strategy: str
     
-    def __init__(self, activation: Tuple[str, ...], strategy: str = 'mean') -> None:
+    def __init__(self, activation: Tuple[str, ...], strategy: str = 'mean', **kwargs) -> None:
         super(MultiActivation, self).__init__()
 
-        def _check_activation_string(activation, valid_activation_strings):
-            if activation not in valid_activation_strings:
-                raise ValueError(
-                    "Invalid activation string {!r}, should be one of {}".format(
-                        activation, valid_activation_strings
-                    )
-                )
-
-        valid_activation_dict = {
-            'relu': F.relu,
-            'sigmoid': torch.sigmoid
-        }
-        if not isinstance(activation, (str, tuple)):
+        valid_activation_functions = [
+            'Threshold', 'ReLU', 'Hardtanh', 'ReLU6', 'Sigmoid', 'Tanh', 'Softmax',
+            'Softmax2d', 'LogSoftmax', 'ELU', 'SELU', 'CELU', 'GLU', 'GELU', 'Hardshrink',
+            'LeakyReLU', 'LogSigmoid', 'Softplus', 'Softshrink', 'PReLU', 'Softsign', 'Softmin',
+            'Tanhshrink', 'RReLU', 'Hardsigmoid', 'Hardswish', 'SiLU'
+        ]
+        if not isinstance(activation, tuple):
             raise TypeError(
-                "Invalid activation type {!r}, should be string or tuple".format(
+                "Invalid activation type {!r}, should be tuple".format(
                     type(activation).__name__
                 )
             )
-        if isinstance(activation, str):
-            _check_activation_string(activation, valid_activation_dict.keys())
-            self.activation = (valid_activation_dict[activation],)
-        else:
-            self.activation = ()
-            for a in activation:
-                if isinstance(a, str):
-                    _check_activation_string(a, valid_activation_dict.keys())
-                    self.activation += (valid_activation_dict[a],)
+        self.activation = ()
+        for a in activation:
+            if type(a).__name__ not in valid_activation_functions:
+                raise ValueError(
+                    "Invalid activation function {!r}, should be one of {}".format(
+                        a, valid_activation_functions
+                    )
+                )
+            self.activation += (a,)
 
         valid_strategy_strings = {'concat', 'mean'}
         if not isinstance(strategy, str):
