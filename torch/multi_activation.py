@@ -34,7 +34,7 @@ class MultiActivation(Module):
     activation: Tuple[str, ...]
     strategy: str
     
-    def __init__(self, activation: Tuple[str, ...], strategy: str = 'mean', **kwargs) -> None:
+    def __init__(self, activation: Tuple[str, ...], strategy: str = 'mean') -> None:
         super(MultiActivation, self).__init__()
 
         valid_activation_functions = [
