@@ -2,27 +2,62 @@ import copy
 
 import tensorflow as tf
 from tensorflow.keras.layers import Layer
+from tensorflow.python.framework import dtypes, tensor_shape
+from tensorflow.python.keras import activations
 from tensorflow.python.keras import backend as K
-from tensorflow.python.framework import dtypes
-from tensorflow.python.framework import tensor_shape
+
 
 class MultiActivation(Layer):
     """Applies a multi activation transformation to the incoming data.
 
     Example:
 
+        >>> model = tf.keras.models.Sequential()
+        >>> model.add(tf.keras.Input(shape=(16,)))
+        >>> model.add(MultiActivation(activation=('linear', 'sigmoid'), strategy='mean'))
+        >>> model.output_shape
+        (None, 16)
+
     Args:
+        activation: Tuple of activations, such as `tf.nn.relu`, or string name of
+            built-in activation function, such as "relu".
+        strategy: Output tensor strategy.
 
     Input shape:
+        Arbitrary. Use the keyword argument `input_shape`
+        (tuple of integers, does not include the batch axis)
+        when using this layer as the first layer in a model.
 
     Output shape:
+        Same shape as input, except for `concat` strategy, which outputs
+        number of activations * input_shape on the last dimension.
 
     """
     
     def __init__(self, activation, strategy='mean', **kwargs):
         super(MultiActivation, self).__init__(**kwargs)
 
-        self.activation = activation
+        if not isinstance(activation, tuple):
+            raise TypeError(
+                'Invalid activation type {!r}, should be tuple'.format(
+                    type(activation).__name__
+                )
+            )
+        self.activation = (activations.get(a) for a in activation)
+    
+        valid_strategy_strings = {'concat', 'mean'}
+        if not isinstance(strategy, str):
+            raise TypeError(
+                'Invalid strategy type {!r}, should be string'.format(
+                    type(strategy).__name__
+                )
+            )
+        if strategy not in valid_strategy_strings:
+            raise ValueError(
+                'Invalid strategy string {!r}, should be one of {}'.format(
+                    strategy, valid_strategy_strings
+                )
+            )
         self.strategy = strategy
 
     def build(self, input_shape):
@@ -48,14 +83,8 @@ class MultiActivation(Layer):
         
     def get_config(self):
         config = {
-            'activation': self.activation,
+            'activation': (activations.serialize(a) for a in self.activation),
             'strategy': self.strategy
         }
         base_config = super(MultiActivation, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
-
-if __name__ == "__main__":
-    m = MultiActivation(activation=(tf.keras.activations.linear, tf.keras.activations.linear), strategy='concat')
-
-    a = tf.random.normal((128, 32))
-    print(m.compute_output_shape(a.shape))

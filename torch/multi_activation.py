@@ -44,7 +44,7 @@ class MultiActivation(Module):
         ]
         if not isinstance(activation, tuple):
             raise TypeError(
-                "Invalid activation type {!r}, should be tuple".format(
+                'Invalid activation type {!r}, should be tuple'.format(
                     type(activation).__name__
                 )
             )
@@ -52,7 +52,7 @@ class MultiActivation(Module):
         for a in activation:
             if type(a).__name__ not in valid_activation_functions:
                 raise ValueError(
-                    "Invalid activation function {!r}, should be one of {}".format(
+                    'Invalid activation function {!r}, should be one of {}'.format(
                         a, valid_activation_functions
                     )
                 )
@@ -61,13 +61,13 @@ class MultiActivation(Module):
         valid_strategy_strings = {'concat', 'mean'}
         if not isinstance(strategy, str):
             raise TypeError(
-                "Invalid strategy type {!r}, should be string".format(
+                'Invalid strategy type {!r}, should be string'.format(
                     type(strategy).__name__
                 )
             )
         if strategy not in valid_strategy_strings:
             raise ValueError(
-                "Invalid strategy string {!r}, should be one of {}".format(
+                'Invalid strategy string {!r}, should be one of {}'.format(
                     strategy, valid_strategy_strings
                 )
             )
