@@ -18,7 +18,7 @@ class MultiActivation(Module):
         - Output (concat): :math:`(N, n*)`, `n` times the input shape shape
         - Output (mean): :math:`(N, *)`, same shape as the input
 
-    Examples::
+    Examples:
 
         >>> m = MultiActivation((ReLU(), Sigmoid()), strategy='mean')
         >>> input = torch.randn(128, 32)
