@@ -6,7 +6,7 @@ from torch.nn import Module
 
 
 class MultiActivation(Module):
-    """Applies a multi activation transformation to the incoming data.
+    """Applies a multi-activation transformation to the incoming data.
 
     Args:
         activation (tuple or str): Activation functions

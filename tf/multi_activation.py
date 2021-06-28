@@ -8,14 +8,14 @@ from tensorflow.python.keras import backend as K
 
 
 class MultiActivation(Layer):
-    """Applies a multi activation transformation to the incoming data.
+    """Applies a multi-activation transformation to the incoming data.
 
     Example:
 
         >>> model = tf.keras.models.Sequential()
         >>> model.add(tf.keras.Input(shape=(16,)))
         >>> model.add(MultiActivation(activation=('linear', 'sigmoid'), strategy='mean'))
-        >>> model.output_shape
+        >>> print(model.output_shape)
         (None, 16)
 
     Args:
