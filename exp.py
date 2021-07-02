@@ -29,9 +29,9 @@ net = net.to(device)
 batch_size = 100
 epochs = 30
 
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+trainloader = DataLoader(trainset, batch_size=batch_size,
                                           shuffle=True, num_workers=0)
-testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+testloader = DataLoader(testset, batch_size=batch_size,
                                          shuffle=False, num_workers=0)
 
 criterion = nn.CrossEntropyLoss()
@@ -56,7 +56,6 @@ for epoch in range(epochs):  # loop over the dataset multiple times
         loss.backward()
         optimizer.step()
 
-        # print statistics
         running_loss += loss.item()
 
         # Calculating predictions
