@@ -1,7 +1,5 @@
 # Multi-Activation Layers
 
----
-
 ## Structure
  * `tf`
    * `multi_activation.py`: Tensorflow-based Multi-Activation layer;
