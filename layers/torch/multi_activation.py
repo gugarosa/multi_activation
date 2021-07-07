@@ -91,7 +91,6 @@ class MultiActivation(Module):
                     )
                 )
             self.activation += (valid_torch_functions[a],)
-        print(self.activation)
 
         valid_strategy_strings = {'concat', 'mean'}
         if not isinstance(strategy, str):
