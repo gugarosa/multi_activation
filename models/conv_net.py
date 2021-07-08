@@ -11,13 +11,14 @@ class ConvNet(Model):
 
     """
 
-    def __init__(self, n_channels=3, n_classes=10, activations=('ReLU()', 'ReLU6()', 'SiLU()', 'Mish()'),
+    def __init__(self, n_channels=3, n_classes=10, lr=0.001, activations=('ReLU()', 'ReLU6()', 'SiLU()', 'Mish()'),
                  strategy='mean', init_weights=None, device='cpu'):
         """Initialization method.
 
         Args:
             n_channels (int): Number of input channels.
             n_classes (int): Number of output classes.
+	    lr (float): Learning rate.
             activations (tuple): Tuple of activation functions.
             strategy (str): Multi-activation strategy.
             init_weights (tuple): Tuple holding the minimum and maximum values for weights initialization.
@@ -29,30 +30,30 @@ class ConvNet(Model):
         super(ConvNet, self).__init__(init_weights, device)
 
         # Convolutional layers
-        # n_input, n_output, kernel_size
+        # (n_input, n_output, kernel_size)
         self.conv1 = nn.Conv2d(n_channels, 32, 5)
         self.conv2 = nn.Conv2d(32, 64, 5)
 
         # Pooling layer
-        # kernel_size, stride
+        # (kernel_size, stride)
         self.pool = nn.MaxPool2d(2, 2)
 
         # Dropout layer
-        # probability
+        # (probability)
         self.dropout1 = nn.Dropout2d(0.25)
 
-	    # Fully-connected layers
-        # n_input, n_output
+	# Fully-connected layers
+        # (n_input, n_output)
         self.fc1 = nn.Linear(64*5*5, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, n_classes)
 
         # Multi-activation layer
-        # activations, strategy
+        # (activations, strategy)
         self.multi = MultiActivation(activations, strategy)
 
         # Compiles the network
-        self._compile()
+        self._compile(lr)
 
     def forward(self, x):
         """Performs the forward pass.
